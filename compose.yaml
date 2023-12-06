@@ -1,0 +1,112 @@
+version: "3.8"
+
+services:
+  execution:
+    image: ethpandaops/erigon:2.53.0
+    user: "root"
+    command:
+      --log.console.verbosity=3
+      --datadir=/execution-data
+      --port=50503
+      --networkid=28256
+      --http.api=eth,erigon,engine,web3,net,debug,trace,txpool,admin,ots
+      --http.vhosts=*
+      --ws
+      --allow-insecure-unlock
+      --nat=extip:${IP_ADDRESS}
+      --http
+      --http.addr=0.0.0.0
+      --http.corsdomain=*
+      --http.port=8545
+      --authrpc.jwtsecret=/el-cl-genesis-data/jwt/jwtsecret
+      --authrpc.addr=0.0.0.0
+      --authrpc.port=8551
+      --authrpc.vhosts=*
+      --metrics
+      --metrics.addr=0.0.0.0
+      --metrics.port=9001
+      --bootnodes=enode://30674d1f5fa3cf763c2d991eeaf585db42c45737a4d47aee3653b50ac33947437769e13f04c12bab63d5c2a416d08b2637e6340d13b7d59489f0ac8dae919756@88.99.94.109:50303
+      --staticpeers=enode://30674d1f5fa3cf763c2d991eeaf585db42c45737a4d47aee3653b50ac33947437769e13f04c12bab63d5c2a416d08b2637e6340d13b7d59489f0ac8dae919756@88.99.94.109:50303
+    volumes:
+      - ./execution-data:/execution-data
+      - ./el-cl-genesis-data:/el-cl-genesis-data
+    ports:
+      - "11345:8545" 
+      - "11346:8546" 
+      - "11351:8551" 
+      - "12301:9001" 
+      - "52303:50503"
+    restart: unless-stopped
+
+  beacon:
+    image: prysmaticlabs/prysm-beacon-chain:latest
+    command:
+      - --accept-terms-of-use=true
+      - --datadir=/consensus-data
+      - --chain-config-file=/el-cl-genesis-data/custom_config_data/config.yaml
+      - --genesis-state=/el-cl-genesis-data/custom_config_data/genesis.ssz
+      - --execution-endpoint=http://execution:8551
+      - --rpc-host=0.0.0.0
+      - --rpc-port=4509
+      - --grpc-gateway-host=0.0.0.0
+      - --grpc-gateway-corsdomain=*
+      - --grpc-gateway-port=4510
+      - --p2p-host-ip=${IP_ADDRESS}
+      - --p2p-tcp-port=13000
+      - --p2p-udp-port=12000
+      - --min-sync-peers=0
+      - --verbosity=debug
+      - --slots-per-archive-point=32
+      - --suggested-fee-recipient=0x8943545177806ED17B9F23F0a21ee5948eCaa776
+      - --subscribe-all-subnets=true
+      - --jwt-secret=/el-cl-genesis-data/jwt/jwtsecret
+      - --disable-monitoring=false
+      - --monitoring-host=0.0.0.0
+      - --monitoring-port=13080
+      - --p2p-static-id=true
+      - --bootstrap-node=enr:-MS4QKjvQWjHjNSlrgJBnwI7j88ULp36kH6FegWreBuiHL0_UGs4EvAxALKLgvKjTFpk6x0zTPyxoXXt0PDeZxlAihgBh2F0dG5ldHOIAAAAAAAAAACEZXRoMpAjvkwgQAAAOP__________gmlkgnY0gmlwhFhjXm2EcXVpY4Iq-YlzZWNwMjU2azGhAoNhfDA57peBhfKlgRRDYKmjwOUPSPqj97hpWmwycgJdiHN5bmNuZXRzAIN0Y3CCKviDdWRwgir4
+      - --peer=/ip4/88.99.94.109/tcp/11000/p2p/16Uiu2HAm4GXc2aYZkdfHvvn56s6zEdoSAwdiNcGkzvXX5y4MX4U4
+      - --checkpoint-sync-url=http://88.99.94.109:9781/
+      - --genesis-beacon-api-url=http://88.99.94.109:9781/
+      - --disable-peer-scorer=true
+      - --historical-slasher-node=true
+    volumes:
+      - ./consensus-data:/consensus-data 
+      - ./el-cl-genesis-data:/el-cl-genesis-data
+    ports:
+      - "12520:12000/udp"
+      - "13520:13000/tcp" 
+      - "5208:4509"
+      - "5209:4510"
+      - "13520:13080"
+    depends_on:
+      - execution
+    restart: unless-stopped
+
+  validator:
+    image: prysmaticlabs/prysm-validator:latest
+    command:
+      - --accept-terms-of-use=true
+      - --chain-config-file=/el-cl-genesis-data/custom_config_data/config.yaml
+      - --beacon-rpc-gateway-provider=beacon:4510
+      - --beacon-rpc-provider=beacon:4509
+      - --wallet-dir=/wallet
+      - --wallet-password-file=/prysm-password/prysm-password.txt
+      - --datadir=/consensus-data
+      - --monitoring-port=8081
+      - --verbosity=info
+      - --suggested-fee-recipient=0x8943545177806ED17B9F23F0a21ee5948eCaa776
+      - --disable-monitoring=false
+      - --monitoring-host=0.0.0.0
+      - --monitoring-port=8081
+    volumes:
+      - ./el-cl-genesis-data:/el-cl-genesis-data
+      - ./prysm-password:/prysm-password
+      - ./consensus-data:/consensus-data
+      - ./wallet:/wallet
+    ports:
+      - "7522:5042"
+      - "7524:5064"
+    depends_on:
+      - beacon
+    restart: unless-stopped
