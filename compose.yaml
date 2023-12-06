@@ -62,7 +62,7 @@ services:
       - --jwt-secret=/el-cl-genesis-data/jwt/jwtsecret
       - --disable-monitoring=false
       - --monitoring-host=0.0.0.0
-      - --monitoring-port=13080
+      - --monitoring-port=14000
       - --p2p-static-id=true
       - --bootstrap-node=enr:-MS4QKjvQWjHjNSlrgJBnwI7j88ULp36kH6FegWreBuiHL0_UGs4EvAxALKLgvKjTFpk6x0zTPyxoXXt0PDeZxlAihgBh2F0dG5ldHOIAAAAAAAAAACEZXRoMpAjvkwgQAAAOP__________gmlkgnY0gmlwhFhjXm2EcXVpY4Iq-YlzZWNwMjU2azGhAoNhfDA57peBhfKlgRRDYKmjwOUPSPqj97hpWmwycgJdiHN5bmNuZXRzAIN0Y3CCKviDdWRwgir4
       - --peer=/ip4/88.99.94.109/tcp/11000/p2p/16Uiu2HAm4GXc2aYZkdfHvvn56s6zEdoSAwdiNcGkzvXX5y4MX4U4
@@ -74,11 +74,11 @@ services:
       - ./consensus-data:/consensus-data 
       - ./el-cl-genesis-data:/el-cl-genesis-data
     ports:
-      - "12520:12000/udp"
-      - "13520:13000/tcp" 
+      - "18520:12000/udp"
+      - "18521:13000/tcp" 
       - "5208:4509"
       - "5209:4510"
-      - "13520:13080"
+      - "18522:14000"
     depends_on:
       - execution
     restart: unless-stopped
