@@ -64,11 +64,10 @@ services:
       - --monitoring-host=0.0.0.0
       - --monitoring-port=14000
       - --p2p-static-id=true
-      - --bootstrap-node=enr:-MS4QKjvQWjHjNSlrgJBnwI7j88ULp36kH6FegWreBuiHL0_UGs4EvAxALKLgvKjTFpk6x0zTPyxoXXt0PDeZxlAihgBh2F0dG5ldHOIAAAAAAAAAACEZXRoMpAjvkwgQAAAOP__________gmlkgnY0gmlwhFhjXm2EcXVpY4Iq-YlzZWNwMjU2azGhAoNhfDA57peBhfKlgRRDYKmjwOUPSPqj97hpWmwycgJdiHN5bmNuZXRzAIN0Y3CCKviDdWRwgir4
+      - --bootstrap-node=enr:-Ma4QEo2mfc5Oq1HMSx96kQJVWtOzwxjpZmMVcFx5boL7j1Pb51LZ3K0NYyWFminBJc2PwFYCNdtXmEfA-aFmXWLsmWCBpqHYXR0bmV0c4j__________4RldGgykCO-TCBQAAA4QEIPAAAAAACCaWSCdjSCaXCEWGNebYRxdWljgir5iXNlY3AyNTZrMaECg2F8MDnul4GF8qWBFENgqaPA5Q9I-qP3uGlabDJyAl2Ic3luY25ldHMPg3RjcIIq-IN1ZHCCKvg
       - --peer=/ip4/88.99.94.109/tcp/11000/p2p/16Uiu2HAm4GXc2aYZkdfHvvn56s6zEdoSAwdiNcGkzvXX5y4MX4U4
-      - --checkpoint-sync-url=http://88.99.94.109:9781/
-      - --genesis-beacon-api-url=http://88.99.94.109:9781/
-      - --disable-peer-scorer=true
+      - --checkpoint-sync-url=http://88.99.94.109:4200/
+      - --genesis-beacon-api-url=http://88.99.94.109:4200/
       - --historical-slasher-node=true
     volumes:
       - ./consensus-data:/consensus-data 
