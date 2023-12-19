@@ -35,7 +35,8 @@ services:
       - "11346:8546" 
       - "11351:8551" 
       - "18301:9001" 
-      - "52303:50503"
+      - "52303:50503/tcp"
+      - "52303:50503/udp"
     restart: unless-stopped
 
   beacon:
@@ -52,8 +53,8 @@ services:
       - --grpc-gateway-corsdomain=*
       - --grpc-gateway-port=4510
       - --p2p-host-ip=${IP_ADDRESS}
-      - --p2p-tcp-port=13000
-      - --p2p-udp-port=12000
+      - --p2p-tcp-port=18521
+      - --p2p-udp-port=18520
       - --min-sync-peers=0
       - --verbosity=debug
       - --slots-per-archive-point=32
@@ -73,8 +74,8 @@ services:
       - ./consensus-data:/consensus-data 
       - ./el-cl-genesis-data:/el-cl-genesis-data
     ports:
-      - "18520:12000/udp"
-      - "18521:13000/tcp" 
+      - "18520:18520/udp"
+      - "18521:18521/tcp" 
       - "5208:4509"
       - "5209:4510"
       - "18522:14000"
